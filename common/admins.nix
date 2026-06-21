@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2025 Ryan Lahfa <ryan.lahfa@numerique.gouv.fr>
+# SPDX-FileContributor: 2026 Xavier Maso <xavier.maso@beta.gouv.fr>
 #
 # SPDX-License-Identifier: MIT
 
@@ -10,7 +11,7 @@
 
     accounts = {
       rlahfa-adm = {
-        # Generated with pamu2cfg --appid pam://bureautix-exemple --origin pam://bureautix-exemple --n
+        # Generated with pamu2fcfg --appid pam://bureautix-exemple --origin pam://bureautix-exemple --nouser
         u2f_keys = [
           "GwkjO84QPbW7WlJmFiizmZizbg8QZx2WRv3uZlW9zPHDFvCU9AgmDb+7wdOb1LCXjvsKl18HNkfl99v0fB3hRg==,vq7GaYWey9xNlokMpPmpVRIaOPL57L9tRBCOoifkeD5xBqvn12q5nPXr976gJZYtOnyRWjR/pazYKIXkwKFR6g==,es256,+presence"
         ];
