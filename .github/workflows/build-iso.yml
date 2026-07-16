@@ -27,7 +27,7 @@ jobs:
             nix-${{ runner.os }}-
       
       - name: Build ISO
-        run: nix-build -A iso -L --keep-going
+        run: nix-build -A iso
       
       - name: Check ISO exists
         run: |
