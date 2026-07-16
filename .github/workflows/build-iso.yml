@@ -1,0 +1,52 @@
+# This file was automatically generated with nix-actions.
+name: Build Bureautix ISO
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+  workflow_dispatch:  # Permet de déclencher manuellement
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120  # Peut être long
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
+      
+      - name: Install Lix
+        uses: samueldr/lix-gha-installer-action@8c7f8a4b0f594ab8a6dc3bf71c217587bbc756b5
+      
+      - name: Cache Nix store
+        uses: nix-community/cache-nix-action@v5
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/flake.lock') }}
+          restore-keys: |
+            nix-${{ runner.os }}-
+      
+      - name: Build ISO
+        run: nix-build -A iso -L --keep-going
+      
+      - name: Check ISO exists
+        run: |
+          ls -lh result/iso/ || ls -lh result/*.iso || find result -name "*.iso" -type f
+      
+      - name: Upload ISO artifact (push)
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v3
+        with:
+          name: bureautix-iso-${{ github.run_number }}
+          path: result/**/*.iso
+          retention-days: 30
+      
+      - name: Create Release (main branch)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: result/**/*.iso
+          tag_name: iso-${{ github.run_number }}-${{ github.sha }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
