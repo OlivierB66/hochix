@@ -14,7 +14,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
+        uses: actions/checkout@v4
       
       - name: Install Lix
         uses: samueldr/lix-gha-installer-action@8c7f8a4b0f594ab8a6dc3bf71c217587bbc756b5
@@ -35,7 +35,7 @@ jobs:
       
       - name: Upload ISO artifact (push)
         if: github.event_name == 'push'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bureautix-iso-${{ github.run_number }}
           path: result/**/*.iso
