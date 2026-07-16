@@ -1,5 +1,5 @@
 # This file was automatically generated with nix-actions.
-name: Build Bureautix ISO
+name: Build Bureautix USB Installer
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:  # Permet de déclencher manuellement
 
 jobs:
-  build-iso:
+  build-usb-installer:
     runs-on: ubuntu-latest
     timeout-minutes: 120  # Peut être long
     
@@ -26,27 +26,27 @@ jobs:
           restore-keys: |
             nix-${{ runner.os }}-
       
-      - name: Build ISO
-        run: nix-build -A iso
+      - name: Build USB installer
+        run: nix-build -A usb-installer --keep-going
       
-      - name: Check ISO exists
+      - name: Check installer exists
         run: |
-          ls -lh result/iso/ || ls -lh result/*.iso || find result -name "*.iso" -type f
+          ls -lh result/ || find result -type f -name "*.iso" -o -name "*.img"
       
-      - name: Upload ISO artifact (push)
+      - name: Upload USB installer artifact (push)
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
-          name: bureautix-iso-${{ github.run_number }}
-          path: result/**/*.iso
+          name: bureautix-usb-installer-${{ github.run_number }}
+          path: result/
           retention-days: 30
       
       - name: Create Release (main branch)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: softprops/action-gh-release@v1
         with:
-          files: result/**/*.iso
-          tag_name: iso-${{ github.run_number }}-${{ github.sha }}
+          files: result/*
+          tag_name: usb-installer-${{ github.run_number }}-${{ github.sha }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
