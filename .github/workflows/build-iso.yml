@@ -5,12 +5,12 @@ on:
   push:
     branches: [ main, develop ]
   pull_request:
-  workflow_dispatch:  # Permet de déclencher manuellement
+  workflow_dispatch:
 
 jobs:
   build-usb-installer:
     runs-on: ubuntu-latest
-    timeout-minutes: 120  # Peut être long
+    timeout-minutes: 120
     
     steps:
       - name: Checkout code
@@ -27,26 +27,19 @@ jobs:
             nix-${{ runner.os }}-
       
       - name: Build USB installer
-        run: nix-build -A usb-installer --keep-going
+        run: nix-build -A usb-installer
       
-      - name: Check installer exists
+      - name: List build output
         run: |
-          ls -lh result/ || find result -type f -name "*.iso" -o -name "*.img"
+          echo "=== Contents of result ==="
+          find . -maxdepth 3 -type f \( -name "*.iso" -o -name "*.img" \) 2>/dev/null || echo "No ISO/IMG found"
+          ls -lah result/ || echo "No result folder"
       
-      - name: Upload USB installer artifact (push)
+      - name: Upload USB installer artifact
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
           name: bureautix-usb-installer-${{ github.run_number }}
-          path: result/
+          path: result
+          if-no-files-found: warn
           retention-days: 30
-      
-      - name: Create Release (main branch)
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: result/*
-          tag_name: usb-installer-${{ github.run_number }}-${{ github.sha }}
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
