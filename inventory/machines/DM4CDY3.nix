@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 {
-  securix.self.mainDisk = "/dev/nvme0n1P4";
+  #securix.self.mainDisk = "/dev/nvme0n1P4";
+  securix.self.mainDisk = "/dev/nvme0";
   securix.self.machine = {
     hardwareSKU = "latitude5340";
     serialNumber = "DM4CDY3";
